@@ -37,8 +37,8 @@ public class RegisterLoginByDefault implements RegisterLoginFunInterface {
 
     @Override
     public boolean checkUserExists(String userName) {
-        UserInfo userInfo = userRepository.findByUserName(userName);
-        if (userInfo == null) {
+        UserInfo user = userRepository.findByUserName(userName);
+        if (user == null) {
             return false;
         }
         return true;

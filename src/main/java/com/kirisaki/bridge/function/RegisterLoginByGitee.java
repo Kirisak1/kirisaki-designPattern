@@ -56,11 +56,8 @@ public class RegisterLoginByGitee implements RegisterLoginFunInterface{
 
     @Override
     public String login3rd(HttpServletRequest request) {
-        String state = request.getHeader("state");
-        String code = request.getHeader("code");
-        if (state == null || state.isEmpty() || code == null || code.isEmpty()) {
-            throw  new RuntimeException("Invalid request");
-        }
+        String state = request.getParameter("state");
+        String code = request.getParameter("code");
         //gitee回调后会发送code 和state
         //需要判断state是否正确
         if (!state.equals(giteeState)) {
