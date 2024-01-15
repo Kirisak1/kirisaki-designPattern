@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 @Component
-public class RegisterLoginByGitee implements RegisterLoginFunInterface{
+public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements RegisterLoginFunInterface{
     @Value("${gitee.state}")
     private String giteeState;
     @Value("${gitee.token.url}")
@@ -23,36 +23,6 @@ public class RegisterLoginByGitee implements RegisterLoginFunInterface{
     private String giteeUserPrefix;
     @Autowired
     private UserRepository userRepository;
-    @Override
-    public String login(String account, String password) {
-        UserInfo userInfo = userRepository.findByUserNameAndUserPassword(account,password);
-        //匹配账号和密码失败,则返回错误信息
-        if (userInfo == null) {
-            return "account / password ERROR";
-        }
-        return "Login success";
-    }
-
-    @Override
-    public String register(UserInfo userInfo) {
-        //如果当前账号已经存在,拒绝注册.账号名称需要唯一
-        if (checkUserExists(userInfo.getUserName())) {
-            throw new RuntimeException("User already registered.");
-        }
-        userInfo.setCreateDate(new Date());
-        //sava 方法是 JPA 中已有的方法,无须额外自己实现
-        userRepository.save(userInfo);
-        return "Register Success";
-    }
-
-    @Override
-    public boolean checkUserExists(String userName) {
-        UserInfo userInfo = userRepository.findByUserName(userName);
-        if (userInfo == null) {
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public String login3rd(HttpServletRequest request) {
@@ -84,15 +54,15 @@ public class RegisterLoginByGitee implements RegisterLoginFunInterface{
      */
     private String autoRegister3rdAndLogin(String userName, String password) {
         //查看是否已经注册过,  如果注册过直接登录
-        if (this.checkUserExists(userName)) {
-            return login(userName, password);
+        if (super.commonCheckUserExists(userName,userRepository)) {
+            return super.commonLogin(userName, password, userRepository);
         }
         //如果没有注册过, 注册之后再登录
         UserInfo userInfo = new UserInfo();
         userInfo.setUserName(userName);
         userInfo.setUserPassword(password);
         userInfo.setCreateDate(new Date());
-        register(userInfo);
-        return login(userName, password);
+        super.commonRegister(userInfo,userRepository);
+        return super.commonLogin(userName, password,userRepository);
     }
 }
