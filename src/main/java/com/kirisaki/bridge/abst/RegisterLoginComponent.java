@@ -4,11 +4,12 @@ import com.kirisaki.bridge.function.RegisterLoginFunInterface;
 import com.kirisaki.pojo.UserInfo;
 import jakarta.servlet.http.HttpServletRequest;
 
-public class RegisterLoginComponent extends AbstractRegisterLoginComponent{
+public class RegisterLoginComponent extends AbstractRegisterLoginComponent {
     protected RegisterLoginComponent(RegisterLoginFunInterface funInterface) {
         super(funInterface);
     }
 
+    // todo 是否要改成public 不确定
     @Override
     protected String login(String account, String password) {
         return funInterface.login(account, password);
