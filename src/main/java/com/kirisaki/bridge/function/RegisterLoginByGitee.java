@@ -1,9 +1,11 @@
 package com.kirisaki.bridge.function;
 
 import com.alibaba.fastjson.JSONObject;
+import com.kirisaki.bridge.abst.factory.RegisterLoginComponentFactory;
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.repo.UserRepository;
 import com.kirisaki.utils.HttpClientUtils;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +13,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
 @Component
-public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements RegisterLoginFunInterface{
+public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements RegisterLoginFunInterface {
     @Value("${gitee.state}")
     private String giteeState;
     @Value("${gitee.token.url}")
@@ -23,6 +26,11 @@ public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements R
     private String giteeUserPrefix;
     @Autowired
     private UserRepository userRepository;
+
+    @PostConstruct
+    private void initFuncMap() {
+        RegisterLoginComponentFactory.funMap.put("GITEE", this);
+    }
 
     @Override
     public String login3rd(HttpServletRequest request) {
@@ -45,6 +53,7 @@ public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements R
         String password = userName;
         return autoRegister3rdAndLogin(userName, password);
     }
+
     /**
      * 调用原有的登录和注册逻辑
      *
@@ -54,7 +63,7 @@ public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements R
      */
     private String autoRegister3rdAndLogin(String userName, String password) {
         //查看是否已经注册过,  如果注册过直接登录
-        if (super.commonCheckUserExists(userName,userRepository)) {
+        if (super.commonCheckUserExists(userName, userRepository)) {
             return super.commonLogin(userName, password, userRepository);
         }
         //如果没有注册过, 注册之后再登录
@@ -62,7 +71,7 @@ public class RegisterLoginByGitee extends AbstractRegisterLoginFunc implements R
         userInfo.setUserName(userName);
         userInfo.setUserPassword(password);
         userInfo.setCreateDate(new Date());
-        super.commonRegister(userInfo,userRepository);
-        return super.commonLogin(userName, password,userRepository);
+        super.commonRegister(userInfo, userRepository);
+        return super.commonLogin(userName, password, userRepository);
     }
 }
