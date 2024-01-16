@@ -55,14 +55,16 @@ public class ProductItemService {
                 .name(dbItem.getName())
                 .pid(dbItem.getPid())
                 .build()));
-        //然后将相同父类代号的子类合并到父类中childList中
+        //将父类相同的子类提取出来
         Map<Integer, List<ProductComposite>> groupingList = composites.stream().collect(Collectors.groupingBy(ProductComposite::getPid));
+        //然后将相同父类代号的子类合并到父类中childList中
         composites.stream().forEach(item -> {
             List<ProductComposite> list = groupingList.get(item.getId());
             item.setChild(
                     list == null ? new ArrayList<>() : list.stream().map(x -> (AbstractProductItem) x).collect(Collectors.toList())
             );
         });
+        //get(0)  可能需要修改
         ProductComposite composite = composites.size() == 0 ? null : composites.get(0);
         return composite;
     }
