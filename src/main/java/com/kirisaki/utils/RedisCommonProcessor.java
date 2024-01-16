@@ -26,7 +26,7 @@ public class RedisCommonProcessor {
     }
 
     //向 Redis 中存入 key:value 数据对,并支持过期时间
-    public void set(String key, String value, long time) {
+    public void set(String key, Object value, long time) {
         if (time > 0) {
             redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
         }else {
