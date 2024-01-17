@@ -3,11 +3,14 @@ package com.kirisaki.service;
 
 import com.kirisaki.items.composite.AbstractProductItem;
 import com.kirisaki.items.composite.ProductComposite;
+import com.kirisaki.items.vistor.AddItemVisitor;
+import com.kirisaki.items.vistor.DelItemVisitor;
 import com.kirisaki.pojo.ProductItem;
 import com.kirisaki.repo.ProductItemRepository;
 import com.kirisaki.utils.RedisCommonProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +18,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ProductItemService {
     @Autowired
     private ProductItemRepository productItemRepository;
     @Autowired
     private RedisCommonProcessor redisCommonProcessor;
+    @Autowired
+    private AddItemVisitor addItemVisitor;
+    @Autowired
+    private DelItemVisitor delItemVisitor;
 
     /**
      * 查询所有商品类目信息
@@ -67,5 +75,49 @@ public class ProductItemService {
         //get(0)  可能需要修改
         ProductComposite composite = composites.size() == 0 ? null : composites.get(0);
         return composite;
+    }
+
+    /**
+     * 新增善品类目
+     *
+     * @param item
+     * @return
+     */
+    public ProductComposite addItems(ProductItem item) {
+
+        productItemRepository.addItem(item.getName(), item.getPid());
+
+        //修改缓存
+        ProductComposite addItem = ProductComposite.builder()
+                .id(productItemRepository.findByNameAndPid(item.getName(), item.getPid()).getId())
+                .name(item.getName())
+                .pid(item.getPid())
+                .child(new ArrayList<>())
+                .build();
+        AbstractProductItem updatedItems = addItemVisitor.visitor(addItem);
+//此处可以增加重试机制, 可以使用spring-retry 或者消息队列
+        redisCommonProcessor.set("items", updatedItems);
+        return (ProductComposite) updatedItems;
+    }
+
+    /**
+     * 删除商品类目
+     *
+     * @param item
+     * @return
+     */
+    public ProductComposite delItems(ProductItem item) {
+        productItemRepository.delItem(item.getId());
+        //修改缓存
+        ProductComposite delItem = ProductComposite.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .pid(item.getPid())
+                .child(new ArrayList<>())
+                .build();
+        AbstractProductItem updatedItems = delItemVisitor.visitor(delItem);
+
+        redisCommonProcessor.set("items", updatedItems);
+        return (ProductComposite) updatedItems;
     }
 }

@@ -20,12 +20,12 @@ public class ProductComposite extends AbstractProductItem{
     private List<AbstractProductItem> child = new ArrayList<>();
     //新增商品类目
     @Override
-    protected void addProductItem(AbstractProductItem item) {
+    public void addProductItem(AbstractProductItem item) {
         this.child.add(item);
     }
     //移除商品类目
     @Override
-    protected void delProductChild(AbstractProductItem item) {
+    public void delProductChild(AbstractProductItem item) {
         ProductComposite removeItem = (ProductComposite) item;
         Iterator iterator = child.iterator();
         while (iterator.hasNext()) {
