@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface ProductItemRepository extends JpaRepository<ProductItem,Integer> {
     @Modifying
     @Query(value = "INSERT INTO PRODUCT_ITEM (id,name,pid)" +
-            " values ((select max(id)+1 from PRODUCT_ITEM)?1,?2)",nativeQuery = true)
+            " values ((select max(id)+1 from PRODUCT_ITEM),?1,?2)",nativeQuery = true)
     public void addItem(String name, int pid);
 
     @Modifying
