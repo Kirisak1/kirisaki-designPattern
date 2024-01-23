@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class OrderService {
     @Autowired
     private StateMachine<OrderState, OrderStateChangeAction> orderStateMachine;
-    //todo 可能引入的依赖不对
     @Autowired
     private RedisStateMachinePersister<OrderState, OrderStateChangeAction> stateMachineRedisPersister;
     @Autowired
