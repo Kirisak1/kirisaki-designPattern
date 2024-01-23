@@ -2,8 +2,8 @@ package com.kirisaki.bridge.function;
 
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.repo.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 /**

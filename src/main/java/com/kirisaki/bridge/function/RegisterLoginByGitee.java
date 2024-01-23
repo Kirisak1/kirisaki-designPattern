@@ -5,13 +5,13 @@ import com.kirisaki.bridge.abst.factory.RegisterLoginComponentFactory;
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.repo.UserRepository;
 import com.kirisaki.utils.HttpClientUtils;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Component

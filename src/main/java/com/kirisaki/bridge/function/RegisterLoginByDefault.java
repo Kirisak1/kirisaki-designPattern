@@ -3,9 +3,10 @@ package com.kirisaki.bridge.function;
 import com.kirisaki.bridge.abst.factory.RegisterLoginComponentFactory;
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.repo.UserRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 @Component
 public class RegisterLoginByDefault extends AbstractRegisterLoginFunc implements RegisterLoginFunInterface {

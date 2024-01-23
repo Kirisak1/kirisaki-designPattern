@@ -1,8 +1,9 @@
 package com.kirisaki.pojo;
 
-import jakarta.persistence.*;
+
 import lombok.Data;
 
+import javax.persistence.*;
 import java.util.Date;
 
 @Data

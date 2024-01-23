@@ -2,9 +2,10 @@ package com.kirisaki.controller;
 
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.service.UserBridgeService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/bridge")

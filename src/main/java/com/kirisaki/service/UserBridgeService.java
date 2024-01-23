@@ -3,8 +3,9 @@ package com.kirisaki.service;
 import com.kirisaki.bridge.abst.AbstractRegisterLoginComponent;
 import com.kirisaki.bridge.abst.factory.RegisterLoginComponentFactory;
 import com.kirisaki.pojo.UserInfo;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class UserBridgeService {

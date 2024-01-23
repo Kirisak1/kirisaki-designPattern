@@ -2,7 +2,9 @@ package com.kirisaki.bridge.abst;
 
 import com.kirisaki.bridge.function.RegisterLoginFunInterface;
 import com.kirisaki.pojo.UserInfo;
-import jakarta.servlet.http.HttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+
 
 public abstract class AbstractRegisterLoginComponent {
     protected RegisterLoginFunInterface funInterface;

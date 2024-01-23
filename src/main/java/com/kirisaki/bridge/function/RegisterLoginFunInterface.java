@@ -1,7 +1,9 @@
 package com.kirisaki.bridge.function;
 
 import com.kirisaki.pojo.UserInfo;
-import jakarta.servlet.http.HttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+
 
 public interface RegisterLoginFunInterface {
     String login(String account, String password);
