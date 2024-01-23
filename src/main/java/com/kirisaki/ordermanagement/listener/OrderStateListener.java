@@ -16,6 +16,12 @@ import org.springframework.stereotype.Component;
 public class OrderStateListener {
     @Autowired
     private RedisCommonProcessor redisCommonProcessor;
+
+    /**
+     * 订单支付成功,修改order状态 并且将redis中的数据更新
+     * @param message
+     * @return
+     */
     @OnTransition(source = "ORDER_WAIT_PAY", target = "ORDER_WAIT_SEND")
     public boolean payToSend(Message<OrderStateChangeAction> message) {
         Order order = (Order) message.getHeaders().get("order");
@@ -26,6 +32,11 @@ public class OrderStateListener {
         redisCommonProcessor.set(order.getOrderId(),order);
         return true;
     }
+    /**
+     * 发送订单,修改order状态 并且将redis中的数据更新
+     * @param message
+     * @return
+     */
     @OnTransition(source = "ORDER_WAIT_SEND", target = "ORDER_WAIT_RECEIVE")
     public boolean sendToReceive(Message<OrderStateChangeAction> message) {
         Order order = (Order) message.getHeaders().get("order");
@@ -36,6 +47,11 @@ public class OrderStateListener {
         redisCommonProcessor.set(order.getOrderId(),order);
         return true;
     }
+    /**
+     * 接收订单,修改order状态 并且将redis中的数据更新
+     * @param message
+     * @return
+     */
     @OnTransition(source = "ORDER_WAIT_RECEIVE", target = "ORDER_FINISH")
     public boolean receiveToFinish(Message<OrderStateChangeAction> message) {
         Order order = (Order) message.getHeaders().get("order");
@@ -44,6 +60,7 @@ public class OrderStateListener {
         }
         order.setOrderState(OrderState.ORDER_FINISH);
         redisCommonProcessor.remove(order.getOrderId());
+
         return true;
     }
 }
