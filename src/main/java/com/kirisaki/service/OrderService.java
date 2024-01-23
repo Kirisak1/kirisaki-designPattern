@@ -1,5 +1,7 @@
 package com.kirisaki.service;
 
+import com.kirisaki.ordermanagement.command.OrderCommand;
+import com.kirisaki.ordermanagement.command.invoker.OrderCommandInvoker;
 import com.kirisaki.ordermanagement.state.OrderState;
 import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
 import com.kirisaki.pojo.Order;
@@ -19,6 +21,8 @@ public class OrderService {
     private RedisStateMachinePersister<OrderState, OrderStateChangeAction> stateMachineRedisPersister;
     @Autowired
     private RedisCommonProcessor redisCommonProcessor;
+    @Autowired
+    private OrderCommand orderCommand;
 
     /**
      * 创建订单
@@ -31,6 +35,8 @@ public class OrderService {
         Order order = Order.builder().orderId(orderId).productId(productId).orderState(OrderState.ORDER_WAIT_PAY).build();
 
         redisCommonProcessor.set(order.getOrderId(), order, 900);
+        OrderCommandInvoker invoker = new OrderCommandInvoker();
+        invoker.invoke(orderCommand, order);
         return order;
     }
 
