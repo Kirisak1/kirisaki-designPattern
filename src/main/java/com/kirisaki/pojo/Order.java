@@ -12,8 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class Order {
-    private int orderId;
-    private int productId;
+    private String orderId;
+    private String productId;
     private OrderState orderState;
     //浮点型
     private Float price;
