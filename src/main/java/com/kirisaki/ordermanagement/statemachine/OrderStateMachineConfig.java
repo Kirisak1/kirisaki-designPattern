@@ -2,6 +2,7 @@ package com.kirisaki.ordermanagement.statemachine;
 
 import com.kirisaki.ordermanagement.state.OrderState;
 import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -18,6 +19,8 @@ import java.util.EnumSet;
 @Configuration
 @EnableStateMachine(name = "orderStateMachine")
 public class OrderStateMachineConfig extends StateMachineConfigurerAdapter<OrderState, OrderStateChangeAction> {
+    @Autowired
+    private RedisConnectionFactory redisConnectionFactory;
     @Override
     public void configure(StateMachineStateConfigurer<OrderState, OrderStateChangeAction> states) throws Exception {
         states.withStates()
@@ -50,8 +53,8 @@ public class OrderStateMachineConfig extends StateMachineConfigurerAdapter<Order
     }
 
     @Bean(name = "stateMachineRedisPersister")
-    public RedisStateMachinePersister<OrderState, OrderStateChangeAction> gerRedisPersister(RedisConnectionFactory redisConnectionFactory) {
-        //todo redisConnectionFactory  的创建问题, 如果为null, 通过 new 对象来尝试
+    public RedisStateMachinePersister<OrderState, OrderStateChangeAction> gerRedisPersister() {
+
         RedisStateMachineContextRepository<OrderState, OrderStateChangeAction> repository = new RedisStateMachineContextRepository<>(redisConnectionFactory);
         RepositoryStateMachinePersist<OrderState, OrderStateChangeAction> persist = new RepositoryStateMachinePersist<>(repository);
         return new RedisStateMachinePersister<>(persist);
