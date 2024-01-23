@@ -2,11 +2,16 @@ package com.kirisaki.ordermanagement.statemachine;
 
 import com.kirisaki.ordermanagement.state.OrderState;
 import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.statemachine.config.EnableStateMachine;
 import org.springframework.statemachine.config.StateMachineConfigurerAdapter;
 import org.springframework.statemachine.config.builders.StateMachineStateConfigurer;
 import org.springframework.statemachine.config.builders.StateMachineTransitionConfigurer;
+import org.springframework.statemachine.persist.RepositoryStateMachinePersist;
+import org.springframework.statemachine.redis.RedisStateMachineContextRepository;
+import org.springframework.statemachine.redis.RedisStateMachinePersister;
 
 import java.util.EnumSet;
 
@@ -42,5 +47,13 @@ public class OrderStateMachineConfig extends StateMachineConfigurerAdapter<Order
                 .source(OrderState.ORDER_WAIT_RECEIVE)
                 .target(OrderState.ORDER_FINISH)
                 .event(OrderStateChangeAction.RECEIVE_ORDER);
+    }
+
+    @Bean(name = "stateMachineRedisPersister")
+    public RedisStateMachinePersister<OrderState, OrderStateChangeAction> gerRedisPersister(RedisConnectionFactory redisConnectionFactory) {
+        //todo redisConnectionFactory  的创建问题, 如果为null, 通过 new 对象来尝试
+        RedisStateMachineContextRepository<OrderState, OrderStateChangeAction> repository = new RedisStateMachineContextRepository<>(redisConnectionFactory);
+        RepositoryStateMachinePersist<OrderState, OrderStateChangeAction> persist = new RepositoryStateMachinePersist<>(repository);
+        return new RedisStateMachinePersister<>(persist);
     }
 }
