@@ -29,8 +29,8 @@ public class OrderController {
     }
 
     @PostMapping("/pay")
-    public Order payOrder(@RequestParam String orderId) {
-        return orderService.pay(orderId);
+    public String payOrder(@RequestParam String orderId, @RequestParam Float price,@RequestParam Integer payType) {
+        return orderService.getPayUrl(orderId, price,payType);
     }
 
     @PostMapping("/send")

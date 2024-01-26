@@ -4,6 +4,7 @@ import com.kirisaki.ordermanagement.command.OrderCommand;
 import com.kirisaki.ordermanagement.command.invoker.OrderCommandInvoker;
 import com.kirisaki.ordermanagement.state.OrderState;
 import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
+import com.kirisaki.pay.facade.PayFacade;
 import com.kirisaki.pojo.Order;
 import com.kirisaki.utils.RedisCommonProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class OrderService {
     private RedisCommonProcessor redisCommonProcessor;
     @Autowired
     private OrderCommand orderCommand;
+    @Autowired
+    private PayFacade payFacade;
 
     /**
      * 创建订单
@@ -101,7 +104,7 @@ public class OrderService {
             boolean res = orderStateMachine.sendEvent(message);
             stateMachineRedisPersister.persist(orderStateMachine, order.getOrderId() + "STATE");
             if (message.getPayload().name().equals(OrderStateChangeAction.RECEIVE_ORDER.name())) {
-                redisCommonProcessor.remove(order.getOrderId()+"STATE");
+                redisCommonProcessor.remove(order.getOrderId() + "STATE");
             }
             return res;
         } catch (Exception e) {
@@ -110,5 +113,19 @@ public class OrderService {
             orderStateMachine.stop();
         }
         return false;
+    }
+
+    /**
+     * 调用门面模式, 返回支付地址
+     *
+     * @param orderId
+     * @param price
+     * @param payType
+     * @return
+     */
+    public String getPayUrl(String orderId, Float price, Integer payType) {
+        Order order = (Order) redisCommonProcessor.get(orderId);
+        order.setPrice(price);
+        return payFacade.pay(order, payType);
     }
 }
