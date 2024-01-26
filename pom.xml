@@ -81,6 +81,12 @@
             <artifactId>spring-statemachine-redis</artifactId>
             <version>1.2.9.RELEASE</version>
         </dependency>
+        <!--支付宝支付-->
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.16.2.ALL</version>
+        </dependency>
     </dependencies>
 
     <build>
