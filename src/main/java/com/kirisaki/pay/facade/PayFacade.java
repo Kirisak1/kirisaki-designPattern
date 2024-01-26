@@ -1,9 +1,9 @@
 package com.kirisaki.pay.facade;
 
-import com.kirisaki.pay.strategy.AlipayStrategy;
-import com.kirisaki.pay.strategy.WechatStrategy;
 import com.kirisaki.pay.strategy.context.PayContext;
+import com.kirisaki.pay.strategy.factory.PayContextFactory;
 import com.kirisaki.pojo.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,20 +19,12 @@ public class PayFacade {
      * @param payType 调用具体的某个字系统
      * @return
      */
+    @Autowired
+    private PayContextFactory contextFactory;
+
     public String pay(Order order, Integer payType) {
         // 每次访问都需要新建对象, 会有大量的GC, 需要用策略工厂模式进行优化
-
-        switch (payType) {
-            case 1:
-                AlipayStrategy alipayStrategy = new AlipayStrategy();
-                PayContext aliPayContext = new PayContext(alipayStrategy);
-                return aliPayContext.execute(order);
-            case 2:
-                WechatStrategy wechatStrategy = new WechatStrategy();
-                PayContext wechatPayContext = new PayContext(wechatStrategy);
-                return wechatPayContext.execute(order);
-            default:
-                throw new UnsupportedOperationException("PayType not supported");
-        }
+        PayContext context = contextFactory.getContext(payType);
+        return context.execute(order);
     }
 }
