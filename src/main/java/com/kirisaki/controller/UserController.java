@@ -1,13 +1,13 @@
 package com.kirisaki.controller;
 
 import com.kirisaki.adapter.Login3rdTarget;
+import com.kirisaki.pojo.BusinessLaunch;
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class UserController {
@@ -27,13 +27,27 @@ public class UserController {
     }
 
     /**
-     *  第三方登录giteee
+     * 第三方登录giteee
+     *
      * @param code
      * @param state
      * @return
      */
     @GetMapping("/gitee")
-    public String gitee(String code, String state){
+    public String gitee(String code, String state) {
         return login3rdTarget.loginByGitee(code, state);
+    }
+
+    /**
+     * 过滤业务投放数据
+     *
+     * @param city
+     * @param sex
+     * @param product
+     * @return
+     */
+    @PostMapping("/business/launch")
+    public List<BusinessLaunch> filterBusinessLaunch(@RequestParam("city") String city, @RequestParam("sex") String sex, @RequestParam("product") String product) {
+        return userService.filterBusinessLaunch(city, sex, product);
     }
 }
