@@ -93,6 +93,11 @@
             <artifactId>apollo-client</artifactId>
             <version>1.7.0</version>
         </dependency>
+        <!--RabbitMq-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
