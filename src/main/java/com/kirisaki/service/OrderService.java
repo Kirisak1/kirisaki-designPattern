@@ -6,6 +6,7 @@ import com.kirisaki.ordermanagement.state.OrderState;
 import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
 import com.kirisaki.pay.facade.PayFacade;
 import com.kirisaki.pojo.Order;
+import com.kirisaki.service.inter.OrderServiceInterface;
 import com.kirisaki.utils.RedisCommonProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -15,7 +16,7 @@ import org.springframework.statemachine.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrderService {
+public class OrderService implements OrderServiceInterface {
     @Autowired
     private StateMachine<OrderState, OrderStateChangeAction> orderStateMachine;
     @Autowired
