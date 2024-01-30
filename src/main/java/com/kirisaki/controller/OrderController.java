@@ -4,8 +4,10 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.kirisaki.pojo.Order;
 import com.kirisaki.service.OrderService;
+import com.kirisaki.service.decorator.OrderServiceDecorator;
 import com.kirisaki.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +24,10 @@ import java.util.Map;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderServiceDecorator orderServiceDecorator;
+    @Value("${service.level}")
+    private Integer serviceLevel;
 
     @PostMapping("/create")
     public Order createOrder(@RequestParam String productId) {
@@ -29,8 +35,8 @@ public class OrderController {
     }
 
     @PostMapping("/pay")
-    public String payOrder(@RequestParam String orderId, @RequestParam Float price,@RequestParam Integer payType) {
-        return orderService.getPayUrl(orderId, price,payType);
+    public String payOrder(@RequestParam String orderId, @RequestParam Float price, @RequestParam Integer payType) {
+        return orderService.getPayUrl(orderId, price, payType);
     }
 
     @PostMapping("/send")
@@ -65,9 +71,11 @@ public class OrderController {
             String tradeNo = new String(request.getParameter("trade_no").getBytes("ISO-8859-1"), "UTF-8");
             float total_amount = Float.parseFloat(new String(request.getParameter("total_amount").getBytes("ISO-8859-1"), "UTF-8"));
 
-            Order order = orderService.pay(out_trade_no);
+            // Order order = orderService.pay(out_trade_no);
+            orderServiceDecorator.setOrderServiceInterface(orderService);
+            Order order = orderServiceDecorator.decoratorPay(out_trade_no, serviceLevel, total_amount);
             return "支付成功页面跳转,当前订单为" + order;
-        }else {
+        } else {
             throw new UnsupportedEncodingException("callback verify failed");
         }
     }
