@@ -7,6 +7,7 @@ import com.kirisaki.pojo.BusinessLaunch;
 import com.kirisaki.pojo.UserInfo;
 import com.kirisaki.repo.BusinessLaunchRepository;
 import com.kirisaki.repo.UserRepository;
+import com.kirisaki.ticket.proxy.DirectorProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class UserService {
     private String handlerType;
     private String currentHandlerType;
     private AbstractBusinessHandler currentHandler;
+    @Autowired
+    private DirectorProxy directorProxy;
 
     public String login(String account, String password) {
         UserInfo userInfo = userRepository.findByUserNameAndUserPassword(account, password);
@@ -111,5 +114,9 @@ public class UserService {
                 }
             }
         }
+    }
+
+    public Object createTicket(String type, String productId, String content, String title, String bankInfo, String taxId) {
+        return directorProxy.buildTicket(type, productId, content, title, bankInfo, taxId);
     }
 }
