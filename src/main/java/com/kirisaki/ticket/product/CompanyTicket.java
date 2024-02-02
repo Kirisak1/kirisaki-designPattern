@@ -38,4 +38,14 @@ public class CompanyTicket implements Cloneable {
      */
     private String content;
 
+    @Override
+    public CompanyTicket clone() {
+        CompanyTicket companyTicket = null;
+        try {
+            companyTicket = (CompanyTicket) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return companyTicket;
+    }
 }

@@ -29,4 +29,15 @@ public class PersonalTicket implements Cloneable {
      * 税率丶发票代码丶校验码丶收款方等信息
      */
     private String content;
+
+    @Override
+    public PersonalTicket clone() {
+        PersonalTicket personalTicket = null;
+        try {
+            personalTicket = (PersonalTicket) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return personalTicket;
+    }
 }
