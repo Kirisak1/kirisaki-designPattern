@@ -7,6 +7,9 @@ import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
 import com.kirisaki.pay.facade.PayFacade;
 import com.kirisaki.pojo.Order;
 import com.kirisaki.service.inter.OrderServiceInterface;
+import com.kirisaki.transaction.colleague.Buyer;
+import com.kirisaki.transaction.colleague.Payer;
+import com.kirisaki.transaction.mediator.Mediator;
 import com.kirisaki.utils.RedisCommonProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -128,5 +131,19 @@ public class OrderService implements OrderServiceInterface {
         Order order = (Order) redisCommonProcessor.get(orderId);
         order.setPrice(price);
         return payFacade.pay(order, payType);
+    }
+
+    public void friendPay(String sourceCustomer, String orderId, String targetCustomer, String payResult, String role) {
+        Mediator mediator = new Mediator();
+        Buyer buyer = new Buyer(orderId, mediator, sourceCustomer);
+        Payer payer = new Payer(orderId, mediator, sourceCustomer);
+        mediator.setBuyer(buyer);
+        mediator.setPayer(payer);
+        if (role.equals("B")) {
+            buyer.messageTransfer(orderId, targetCustomer, payResult);
+        } else if (role.equals("P")) {
+            payer.messageTransfer(orderId, targetCustomer, payResult);
+
+        }
     }
 }
