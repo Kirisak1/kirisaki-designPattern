@@ -7,6 +7,7 @@ import com.kirisaki.ordermanagement.state.OrderStateChangeAction;
 import com.kirisaki.pay.facade.PayFacade;
 import com.kirisaki.pojo.Order;
 import com.kirisaki.service.inter.OrderServiceInterface;
+import com.kirisaki.transaction.colleague.AbstractCustomer;
 import com.kirisaki.transaction.colleague.Buyer;
 import com.kirisaki.transaction.colleague.Payer;
 import com.kirisaki.transaction.mediator.Mediator;
@@ -17,6 +18,8 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.redis.RedisStateMachinePersister;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
 
 @Service
 public class OrderService implements OrderServiceInterface {
@@ -30,6 +33,8 @@ public class OrderService implements OrderServiceInterface {
     private OrderCommand orderCommand;
     @Autowired
     private PayFacade payFacade;
+    @Autowired
+    private Mediator mediator;
 
     /**
      * 创建订单
@@ -133,17 +138,18 @@ public class OrderService implements OrderServiceInterface {
         return payFacade.pay(order, payType);
     }
 
+
     public void friendPay(String sourceCustomer, String orderId, String targetCustomer, String payResult, String role) {
-        Mediator mediator = new Mediator();
         Buyer buyer = new Buyer(orderId, mediator, sourceCustomer);
         Payer payer = new Payer(orderId, mediator, sourceCustomer);
-        mediator.setBuyer(buyer);
-        mediator.setPayer(payer);
+        HashMap<String, AbstractCustomer> map = new HashMap<>();
+        map.put("buyer", buyer);
+        map.put("payer", payer);
+        mediator.customerInstances.put(orderId, map);
         if (role.equals("B")) {
             buyer.messageTransfer(orderId, targetCustomer, payResult);
         } else if (role.equals("P")) {
             payer.messageTransfer(orderId, targetCustomer, payResult);
-
         }
     }
 }
