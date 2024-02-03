@@ -21,5 +21,5 @@ public abstract class AbstractCustomer {
         return this.customerName;
     }
 
-    public abstract void messageTransfer(String orderId, String targetCustom, String payResult);
+    public abstract void messageTransfer(String orderId, String targetCustomer, String payResult);
 }

@@ -8,7 +8,7 @@ public class Payer extends AbstractCustomer {
     }
 
     @Override
-    public void messageTransfer(String orderId, String targetCustom, String payResult) {
-
+    public void messageTransfer(String orderId, String targetCustomer, String payResult) {
+        super.mediator.messageTransfer(orderId, targetCustomer, this, payResult);
     }
 }
