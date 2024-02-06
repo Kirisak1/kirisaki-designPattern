@@ -17,7 +17,7 @@ public class EsSqlQuery implements EsSqlQueryInterface<EsQueryIterator> {
     private String cursor;
 
     //分页查询时,只传入 cursor 参数即可
-    public EsSqlQuery(String cursor) {
+    public EsSqlQuery() {
         this.cursor = cursor;
     }
 
