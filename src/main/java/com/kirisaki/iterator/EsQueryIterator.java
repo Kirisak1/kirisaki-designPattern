@@ -35,7 +35,7 @@ public class EsQueryIterator implements Iterator<Map<String, Object>> {
         if (iterator == null || this.cursor == null) {
             return false;
         }
-        EsResponseData responseData = restTemplate.postForObject("http://localhost:9200/_sql?format=json", new EsSqlQuery(), EsResponseData.class);
+        EsResponseData responseData = restTemplate.postForObject("http://localhost:9200/_sql?format=json", new EsSqlQuery(this.cursor), EsResponseData.class);
         this.cursor = responseData.getCursor();
         this.iterator = convert(columns, responseData).iterator();
         //继续进行迭代
